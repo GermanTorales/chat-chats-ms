@@ -50,13 +50,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleConnection(client: Socket) {
     try {
       const clientId = client.id;
-      const token = client?.handshake?.headers?.authorization;
+      const token = client?.handshake?.auth?.authorization || client?.handshake?.headers?.authorization;
 
       if (!token) client.disconnect();
 
-      const bearerToken = `Bearer ${token}`;
-
-      const userData = await this.getUserByToken.exec(bearerToken);
+      const userData = await this.getUserByToken.exec(token);
 
       this.users.push({ ...userData, clientId });
 
